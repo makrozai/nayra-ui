@@ -10,6 +10,13 @@ const config: StorybookConfig = {
   framework: {
     name: '@storybook/react-vite',
     options: {},
+  },
+
+  async viteFinal(config, { configType }) {
+    if (configType === 'PRODUCTION') {
+      config.base = '/nayra-ui/';
+    }
+    return config;
   }
 };
 export default config;
