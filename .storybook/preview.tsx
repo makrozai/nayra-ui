@@ -1,6 +1,7 @@
 import type { Preview, Decorator } from '@storybook/react-vite';
 import React from 'react';
 import '~/assets/css/main.css';
+import './storybook.css';
 import config from '../nayra.config.json';
 import { ThemedDocsContainer } from './DocsContainer';
 
@@ -9,6 +10,7 @@ const { storybook: sb, componentPrefix } = config;
 const withTheme: Decorator = (Story, context) => {
   const theme = (context.globals['theme'] as string) ?? sb.defaultTheme;
   document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
   return <Story />;
 };
 
