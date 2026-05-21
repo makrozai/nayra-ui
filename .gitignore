@@ -29,3 +29,13 @@ coverage/
 
 # Storybook
 storybook-static/
+
+# AI Tools and MCPs
+.claude/
+.playwright-mcp/
+.gemini/
+
+# Environment files
+.env
+.env.*
+!.env.example
