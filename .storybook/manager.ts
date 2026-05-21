@@ -1,4 +1,4 @@
-import { addons } from '@storybook/manager-api';
+import { addons } from 'storybook/manager-api';
 import { lightTheme, darkTheme } from './themes';
 
 // El Manager UI sigue la preferencia del SO al cargar.

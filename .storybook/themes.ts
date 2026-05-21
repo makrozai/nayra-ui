@@ -1,4 +1,4 @@
-import { create } from '@storybook/theming';
+import { create } from 'storybook/theming';
 import config from '../nayra.config.json';
 
 const { storybook: sb } = config;
