@@ -1,3 +1,47 @@
 {
-  "componentPrefix": "Na"
+  "componentPrefix": "Na",
+  "storybook": {
+    "brand": {
+      "title": "Nayra UI",
+      "url": "https://github.com/makrozai/nayra-ui",
+      "image": "/nayra-logo.svg"
+    },
+    "defaultTheme": "light",
+    "fonts": {
+      "base": "'Inter', system-ui, sans-serif",
+      "code": "'Fira Code', 'Cascadia Code', monospace"
+    },
+    "colors": {
+      "light": {
+        "primary": "#0ea5e9",
+        "secondary": "#6366f1",
+        "appBg": "#f8fafc",
+        "appContentBg": "#ffffff",
+        "appBorderColor": "#e2e8f0",
+        "text": "#0f172a",
+        "textMuted": "#64748b",
+        "barBg": "#ffffff",
+        "barText": "#475569",
+        "barSelected": "#0ea5e9",
+        "inputBg": "#ffffff",
+        "inputBorder": "#cbd5e1",
+        "inputText": "#0f172a"
+      },
+      "dark": {
+        "primary": "#38bdf8",
+        "secondary": "#818cf8",
+        "appBg": "#0f172a",
+        "appContentBg": "#1e293b",
+        "appBorderColor": "#334155",
+        "text": "#f8fafc",
+        "textMuted": "#94a3b8",
+        "barBg": "#1e293b",
+        "barText": "#cbd5e1",
+        "barSelected": "#38bdf8",
+        "inputBg": "#1e293b",
+        "inputBorder": "#475569",
+        "inputText": "#f8fafc"
+      }
+    }
+  }
 }

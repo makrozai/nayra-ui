@@ -1,0 +1,30 @@
+/*
+ * Storybook preview overrides — imported in preview.tsx, never bundled in production.
+ *
+ * Problem: two async gaps cause visible flicker on theme switch:
+ *   1. withTheme sets data-theme synchronously, but DocsContainer re-renders
+ *      its Storybook theme object ~1 frame later (MutationObserver → React → Emotion).
+ *   2. Individual story canvases and docs elements update at slightly different times.
+ *
+ * Fix: CSS rules tied to data-theme update the most visible elements instantly,
+ * matching the Storybook theme's appContentBg / appBg values exactly. A short
+ * transition hides any remaining per-element stagger.
+ */
+
+/* ── Instant docs background sync ─────────────────────────────────────────── */
+/* Specificity needs to beat Emotion's single-class rules. !important ensures  */
+/* the right color shows before the React render cycle completes.              */
+html[data-theme='dark']  .sbdocs-wrapper { background-color: #1e293b !important; }
+html[data-theme='light'] .sbdocs-wrapper { background-color: #ffffff !important; }
+
+/* ── Smooth transitions — hide remaining per-element stagger ──────────────── */
+/* 120ms is short enough to feel instant; long enough to mask async updates.   */
+.sbdocs-wrapper,
+.sbdocs-content,
+.sbdocs-preview,
+.docs-story {
+  transition:
+    background-color 120ms ease,
+    color            120ms ease,
+    border-color     120ms ease;
+}

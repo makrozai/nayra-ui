@@ -1,14 +1,30 @@
+/* ==========================================================================
+   COMPONENT: Icon
+   Layer ITCSS: Component (c-)
+   ========================================================================== */
+
 @layer components {
-  /* En lugar de anclar 'na-icon' fijo, asumimos la interpolación si es necesaria 
-     O definimos estilos utilitarios sobre la estructura si se requiere BEM puro.
-     Al ser Tailwind, podemos usar reglas dinámicas, pero en una librería
-     agnóstica del prefijo, las clases se generan en runtime. Si inyectamos SCSS/CSS
-     puro, podríamos necesitar procesadores PostCSS. Aquí nos basamos en Tailwind. */
-  
-  .nayra-icon {
-    /* Clases de fallback o base que no estén cubiertas por Tailwind */
+  .c-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+  }
+
+  .c-icon {
     display: inline-block;
-    line-height: 1;
-    text-align: center;
+  }
+
+  /* SVG que hereda currentColor: escala con font-size del contenedor */
+  .c-icon--svg {
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
+  }
+
+  /* SVG multicolor: mismas dimensiones sin inyectar currentColor */
+  .c-icon--colorful {
+    width: 1em;
+    height: 1em;
   }
 }
