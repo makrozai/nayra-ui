@@ -116,3 +116,4 @@ export const Gallery: Story = {
     layout: 'fullscreen',
   },
 };
+

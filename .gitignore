@@ -42,3 +42,11 @@ storybook-static/
 .env
 .env.*
 !.env.example
+
+# Playwright
+playwright-report/
+test-results/
+
+# Temp debugging
+serve-dir-dev/
+serve-dir/

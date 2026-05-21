@@ -70,3 +70,11 @@ jobs:
       # 10. Verificar que Storybook compila
       - name: Build Storybook
         run: pnpm build-storybook
+
+      # 11. Instalar dependencias de Playwright
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      # 12. Pruebas E2E de Playwright
+      - name: E2E Playwright tests
+        run: pnpm test:playwright
