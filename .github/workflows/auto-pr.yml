@@ -31,23 +31,26 @@ jobs:
             exit 0
           fi
 
-          BODY="Este PR fue generado manualmente e incluye los siguientes cambios consolidados:
+          cat << 'EOF' > pr_body.txt
+          Este PR fue generado manualmente e incluye los siguientes cambios consolidados:
 
           ### Cambios
-          $COMMITS
-          "
+          EOF
+          
+          # Append the actual commits without evaluating bash variables/backticks
+          git log origin/master..origin/develop --oneline --format="- %s (%h)" >> pr_body.txt
 
           # Revisar si ya existe un PR
           PR_EXISTS=$(gh pr list --base master --head develop --json number -q '.[0].number')
 
-          if [ -n "$PR_EXISTS" ]; then
+          if [ -n "$PR_EXISTS" ] && [ "$PR_EXISTS" != "null" ]; then
             echo "Actualizando PR existente #$PR_EXISTS..."
-            gh pr edit $PR_EXISTS --title "Release: Acumulado de develop a master" --body "$BODY"
+            gh pr edit $PR_EXISTS --title "Release: Acumulado de develop a master" --body-file pr_body.txt
           else
             echo "Creando nuevo PR..."
             gh pr create \
               --base master \
               --head develop \
               --title "Release: Acumulado de develop a master" \
-              --body "$BODY"
+              --body-file pr_body.txt
           fi
