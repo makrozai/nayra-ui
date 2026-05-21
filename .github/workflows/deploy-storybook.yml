@@ -16,7 +16,11 @@ name: Deploy Storybook
 
 on:
   push:
-    branches: [master]
+    branches: ["master"]
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 # Permisos necesarios para GitHub Pages via Actions
 permissions:
