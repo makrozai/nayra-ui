@@ -1,0 +1,83 @@
+{
+  "name": "@makrozai/nayra-ui",
+  "version": "0.1.0",
+  "description": "Nayra UI Library",
+  "type": "module",
+  "main": "./dist/nayra-ui.js",
+  "module": "./dist/nayra-ui.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/nayra-ui.js",
+      "require": "./dist/nayra-ui.cjs"
+    },
+    "./style.css": "./dist/nayra-ui.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "prebuild": "npx tsx scripts/generate-exports.ts",
+    "build": "tsc --noEmit && vite build && tsc -p tsconfig.build.json",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "vitest run -c .storybook/vitest.config.ts",
+    "test:all": "pnpm test && pnpm test:e2e",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/makrozai/nayra-ui.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.2.0"
+  },
+  "peerDependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@storybook/addon-docs": "^10.4.0",
+    "@storybook/addon-vitest": "10.4.0",
+    "@storybook/react": "10.4.0",
+    "@storybook/react-vite": "^10.4.0",
+    "@storybook/test": "^8.6.14",
+    "@tailwindcss/vite": "^4.3.0",
+    "@testing-library/jest-dom": "^6.6.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.0",
+    "@types/node": "^25.9.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vitejs/plugin-react": "^6.0.2",
+    "@vitest/browser": "^4.1.7",
+    "@vitest/browser-playwright": "^4.1.7",
+    "eslint": "^10.4.0",
+    "eslint-plugin-jsx-a11y": "^6.10.0",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-storybook": "^10.4.0",
+    "globals": "^17.6.0",
+    "happy-dom": "^20.9.0",
+    "playwright": "^1.60.0",
+    "storybook": "^10.4.0",
+    "tailwindcss": "^4.3.0",
+    "typescript": "^6.0.0",
+    "typescript-eslint": "^8.59.4",
+    "vite": "^8.0.10",
+    "vite-svg-loader": "^5.1.0",
+    "vitest": "^4.1.7"
+  }
+}

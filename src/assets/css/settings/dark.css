@@ -1,0 +1,11 @@
+@media (prefers-color-scheme: dark) {
+  :root {
+    --na-color-primary-50: #0c4a6e;
+    --na-color-primary-100: #075985;
+    --na-color-primary-500: #38bdf8;
+    --na-color-primary-900: #e0f2fe;
+
+    --na-color-bg: #0f172a;
+    --na-color-text: #f8fafc;
+  }
+}

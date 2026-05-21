@@ -1,0 +1,7 @@
+@layer base {
+  :root {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+}

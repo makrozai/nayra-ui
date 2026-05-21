@@ -1,0 +1,14 @@
+@layer components {
+  /* En lugar de anclar 'na-icon' fijo, asumimos la interpolación si es necesaria 
+     O definimos estilos utilitarios sobre la estructura si se requiere BEM puro.
+     Al ser Tailwind, podemos usar reglas dinámicas, pero en una librería
+     agnóstica del prefijo, las clases se generan en runtime. Si inyectamos SCSS/CSS
+     puro, podríamos necesitar procesadores PostCSS. Aquí nos basamos en Tailwind. */
+  
+  .nayra-icon {
+    /* Clases de fallback o base que no estén cubiertas por Tailwind */
+    display: inline-block;
+    line-height: 1;
+    text-align: center;
+  }
+}

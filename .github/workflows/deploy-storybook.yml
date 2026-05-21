@@ -1,0 +1,74 @@
+# =============================================================================
+# Deploy Storybook → GitHub Pages
+# =============================================================================
+# Descripción:
+#   Este workflow construye el Storybook del proyecto y lo despliega
+#   automáticamente a GitHub Pages cada vez que se hace push a master.
+#
+# Requisito manual (una sola vez):
+#   En GitHub → Settings → Pages → Source → seleccionar "GitHub Actions".
+#
+# URL del deploy:
+#   https://makrozai.github.io/nayra-ui/
+# =============================================================================
+
+name: Deploy Storybook
+
+on:
+  push:
+    branches: [master]
+
+# Permisos necesarios para GitHub Pages via Actions
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Evitar deploys concurrentes a Pages
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  deploy-storybook:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      # 1. Checkout del código fuente
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Instalar pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      # 3. Configurar Node.js con caché de pnpm
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      # 4. Instalar dependencias (lockfile estricto)
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 5. Construir Storybook (output: storybook-static/)
+      - name: Build Storybook
+        run: pnpm build-storybook
+
+      # 6. Subir artefacto para GitHub Pages
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: storybook-static
+
+      # 7. Desplegar a GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

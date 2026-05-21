@@ -1,0 +1,69 @@
+# =============================================================================
+# PR Validation → develop
+# =============================================================================
+# Descripción:
+#   Este workflow valida automáticamente cada Pull Request dirigido a la rama
+#   develop. Ejecuta lint, type-checking, tests unitarios y verifica que
+#   tanto la librería como el Storybook compilan correctamente.
+#
+# Se ejecuta en cada push a un PR abierto contra develop.
+# =============================================================================
+
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [develop]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout del código fuente
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Instalar pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      # 3. Configurar Node.js con caché
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      # 4. Instalar dependencias
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 5. Generar exports dinámicos (necesario antes de lint/tsc)
+      - name: Generate exports
+        run: pnpm prebuild
+
+      # 6. Lint del código fuente
+      - name: Lint
+        run: pnpm lint
+
+      # 7. Verificación de tipos
+      - name: Type check
+        run: pnpm tsc --noEmit
+
+      # 8. Tests unitarios
+      - name: Unit tests
+        run: pnpm test
+
+      # 9. Verificar que la librería compila
+      - name: Build library
+        run: pnpm build
+
+      # 10. Verificar que Storybook compila
+      - name: Build Storybook
+        run: pnpm build-storybook

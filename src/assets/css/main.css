@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* 1. Settings (Variables, Themes) */
+@import "./settings/light.css";
+@import "./settings/dark.css";
+
+@theme {
+  --color-primary-50: var(--na-color-primary-50);
+  --color-primary-100: var(--na-color-primary-100);
+  --color-primary-500: var(--na-color-primary-500);
+  --color-primary-900: var(--na-color-primary-900);
+  --color-bg: var(--na-color-bg);
+  --color-text: var(--na-color-text);
+}
+
+/* 2. Tools (Mixins, Functions) */
+/* 3. Generic (Resets) */
+@import "./generic/reset.css";
+
+/* 4. Elements (Base HTML tags) */
+/* 5. Objects (Wrappers, grids sin estilo) */
+/* 6. Components (Componentes de UI - BEM) */
+/* Los estilos de componentes ahora se importan localmente desde cada componente */
+
+/* 7. Utilities (Clases de ayuda) */
