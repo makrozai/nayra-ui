@@ -2,30 +2,14 @@ import type { Preview, Decorator } from '@storybook/react-vite';
 import React from 'react';
 import '~/assets/css/main.css';
 import config from '../nayra.config.json';
+import { ThemedDocsContainer } from './DocsContainer';
 
 const { storybook: sb, componentPrefix } = config;
 
-// ---------------------------------------------------------------------------
-// Decorator: aplica data-theme al <html> y provee contexto de color explícito
-// para que los componentes siempre rendericen sobre el fondo correcto.
-// ---------------------------------------------------------------------------
 const withTheme: Decorator = (Story, context) => {
   const theme = (context.globals['theme'] as string) ?? sb.defaultTheme;
   document.documentElement.setAttribute('data-theme', theme);
-
-  return (
-    <div
-      style={{
-        background: 'var(--na-color-bg)',
-        color: 'var(--na-color-text)',
-        padding: '2rem',
-        minHeight: '100vh',
-        transition: 'background 200ms ease, color 200ms ease',
-      }}
-    >
-      <Story />
-    </div>
-  );
+  return <Story />;
 };
 
 const preview: Preview = {
@@ -51,10 +35,10 @@ const preview: Preview = {
   decorators: [withTheme],
 
   parameters: {
-    // El fondo lo controla nuestro decorator via CSS variables
     backgrounds: { disable: true },
 
     docs: {
+      container: ThemedDocsContainer,
       source: {
         transform: (code: string, storyContext: { component?: { name?: string } }) => {
           const componentName = storyContext.component?.name;
