@@ -7,6 +7,18 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [0.2.0] - 2026-05-21
+
+### Added
+- **Icon Component refactor** — Implementación completa según SPEC v2.0.0.
+- **IconGallery** — Componente visualizador para Storybook.
+- **SVGs Dinámicos** — Soporte nativo para iconos locales con variantes (solid, regular, brands, colorful).
+- Script de autogeneración de registro de iconos.
+
+### Fixed
+- **PR Actions**: Arreglado error de redundancia de `role="list"` en ESLint que bloqueaba CI.
+- **Dependency Review**: Ajustadas políticas para repositorios públicos sin GHAS.
+
 ## [0.1.1] - 2026-05-21
 
 ### Fixed

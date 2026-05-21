@@ -1,29 +1,12 @@
-import { SVGProps, FunctionComponent } from 'react';
+export type IconSource = 'font' | 'svg';
+export type IconType = 'solid' | 'regular' | 'brands' | 'colorful';
 
-export interface IconProps extends SVGProps<SVGSVGElement> {
-  /**
-   * Nombre del ícono de FontAwesome (ej. 'fas fa-home')
-   * o componente SVG importado mediante vite-svg-loader.
-   */
-  icon?: string | FunctionComponent<SVGProps<SVGSVGElement>>;
-  
-  /**
-   * Color del ícono (se usa fill="currentColor" por defecto en SVGs o color css)
-   */
-  color?: string;
-
-  /**
-   * Tamaño del ícono (en píxeles)
-   */
+export interface IconProps {
+  icon: string;
+  source?: IconSource;
+  type?: IconType;
   size?: number;
-
-  /**
-   * Título para accesibilidad (aria-label)
-   */
-  title?: string;
-  
-  /**
-   * Clases adicionales
-   */
+  ariaLabel?: string;
+  rotate?: number;
   className?: string;
 }
