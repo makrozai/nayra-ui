@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "prebuild": "npx tsx scripts/generate-exports.ts",
+    "prebuild": "npx tsx scripts/generate-icons.ts && npx tsx scripts/generate-exports.ts",
     "build": "tsc --noEmit && vite build && tsc -p tsconfig.build.json",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest run",
