@@ -7,6 +7,14 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [0.1.1] - 2026-05-21
+
+### Fixed
+- **Storybook Deploy**: Fix github pages base path configuration in viteFinal for GitHub Pages correctly serving static assets.
+- **CI/CD**: Fix npm publish conflict by bumping version to 0.1.1.
+
+---
+
 ## [0.1.0] - 2026-05-21
 
 ### Added
