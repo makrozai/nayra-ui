@@ -15,10 +15,39 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: develop
-      - name: Create Pull Request
-        uses: repo-sync/pull-request@v2
-        with:
-          destination_branch: "master"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          pr_title: "chore: merge develop into master"
-          pr_body: "Automated PR from develop to master"
+          fetch-depth: 0
+
+      - name: Fetch master branch
+        run: git fetch origin master:master
+
+      - name: Create or Update Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COMMITS=$(git log origin/master..origin/develop --oneline --format="- %s (%h)")
+          
+          if [ -z "$COMMITS" ]; then
+            echo "No hay commits nuevos en develop para fusionar hacia master."
+            exit 0
+          fi
+
+          BODY="Este PR fue generado manualmente e incluye los siguientes cambios consolidados:
+
+          ### Cambios
+          $COMMITS
+          "
+
+          # Revisar si ya existe un PR
+          PR_EXISTS=$(gh pr list --base master --head develop --json number -q '.[0].number')
+
+          if [ -n "$PR_EXISTS" ]; then
+            echo "Actualizando PR existente #$PR_EXISTS..."
+            gh pr edit $PR_EXISTS --title "Release: Acumulado de develop a master" --body "$BODY"
+          else
+            echo "Creando nuevo PR..."
+            gh pr create \
+              --base master \
+              --head develop \
+              --title "Release: Acumulado de develop a master" \
+              --body "$BODY"
+          fi
