@@ -11,7 +11,10 @@ lerna-debug.log*
 node_modules/
 dist/
 dist-ssr/
+build/
 *.local
+.eslintcache
+.tsbuildinfo
 
 # Editor directories and files
 .vscode/*
@@ -29,3 +32,13 @@ coverage/
 
 # Storybook
 storybook-static/
+
+# AI Tools and MCPs
+.claude/
+.playwright-mcp/
+.gemini/
+
+# Environment files
+.env
+.env.*
+!.env.example
