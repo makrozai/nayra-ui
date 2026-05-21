@@ -1,24 +1,201 @@
 /*
  * Storybook preview overrides — imported in preview.tsx, never bundled in production.
  *
- * Problem: two async gaps cause visible flicker on theme switch:
- *   1. withTheme sets data-theme synchronously, but DocsContainer re-renders
- *      its Storybook theme object ~1 frame later (MutationObserver → React → Emotion).
- *   2. Individual story canvases and docs elements update at slightly different times.
+ * Strategy:
+ *   1. Target SPECIFIC Storybook class names, not generic `div`, to avoid
+ *      overriding component renderings inside the story canvas (.sb-story).
+ *   2. data-theme is set on the iframe html element:
+ *        – on page load: URL globals parse in preview.tsx
+ *        – on theme switch: channel listener in preview.tsx
+ *        – on story render: withTheme decorator in preview.tsx
+ *   3. A 120ms CSS transition hides any residual per-element async stagger.
  *
- * Fix: CSS rules tied to data-theme update the most visible elements instantly,
- * matching the Storybook theme's appContentBg / appBg values exactly. A short
- * transition hides any remaining per-element stagger.
+ * Selector map (confirmed against live Storybook 10 DOM):
+ *   .sbdocs-wrapper          – outer docs page wrapper
+ *   .sbdocs-content          – markdown/text content area
+ *   .sbdocs-preview          – each story preview block
+ *   .docs-story              – canvas container inside preview
+ *   .sb-story                – the actual rendered component area
+ *   .sb-argstableBlock       – controls/props table
+ *   .sb-argstableBlock-body  – table body rows
+ *   .docblock-argstable-body – lower-level body rows (also present)
+ *   .docblock-source         – code block section
  */
 
-/* ── Instant docs background sync ─────────────────────────────────────────── */
-/* Specificity needs to beat Emotion's single-class rules. !important ensures  */
-/* the right color shows before the React render cycle completes.              */
-html[data-theme='dark']  .sbdocs-wrapper { background-color: #1e293b !important; }
-html[data-theme='light'] .sbdocs-wrapper { background-color: #ffffff !important; }
+/* ── Base: docs wrapper ─────────────────────────────────────────────────────── */
+html[data-theme='dark'] .sbdocs-wrapper {
+  background-color: #0f172a !important;
+  color: #f1f5f9 !important;
+}
+html[data-theme='light'] .sbdocs-wrapper {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
 
-/* ── Smooth transitions — hide remaining per-element stagger ──────────────── */
-/* 120ms is short enough to feel instant; long enough to mask async updates.   */
+/* ── Docs content containers ────────────────────────────────────────────────── */
+/* Target known Storybook containers that Emotion may override directly.        */
+/* Generic `div` is intentionally avoided — it would bleed into .sb-story.     */
+html[data-theme='dark'] .sbdocs-content,
+html[data-theme='dark'] .sbdocs-preview,
+html[data-theme='dark'] .docblock-argstable,
+html[data-theme='dark'] .sb-argstableBlock {
+  color: #f1f5f9 !important;
+}
+
+/* ── Headings, text, links ──────────────────────────────────────────────────── */
+html[data-theme='dark'] .sbdocs-wrapper h1,
+html[data-theme='dark'] .sbdocs-wrapper h2,
+html[data-theme='dark'] .sbdocs-wrapper h3,
+html[data-theme='dark'] .sbdocs-wrapper h4,
+html[data-theme='dark'] .sbdocs-wrapper p,
+html[data-theme='dark'] .sbdocs-wrapper li,
+html[data-theme='dark'] .sbdocs-wrapper span:not([class*='badge']):not([class*='Badge']) {
+  color: #f1f5f9 !important;
+}
+
+html[data-theme='dark'] .sbdocs-wrapper a {
+  color: #60a5fa !important;
+}
+
+/* ── Canvas / Preview blocks ────────────────────────────────────────────────── */
+html[data-theme='dark'] .sbdocs-preview {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+/* Story canvas shell — dark bg behind the rendered component */
+html[data-theme='dark'] .docs-story {
+  background-color: #1e293b !important;
+}
+
+/* Storybook 10 injects an inner div with an inline Emotion background.        */
+/* Making it transparent lets .docs-story bg show through.                    */
+html[data-theme='dark'] .docs-story > div {
+  background-color: transparent !important;
+}
+
+/* ── Canvas toolbar buttons (zoom / fullscreen / etc.) ──────────────────────── */
+/* These live in .sbdocs-preview but OUTSIDE .sb-story.                        */
+html[data-theme='dark'] .sbdocs-preview button {
+  color: #94a3b8 !important;
+}
+
+/* Restore component buttons inside the actual story canvas */
+html[data-theme='dark'] .sb-story button {
+  color: var(--na-color-text) !important;
+}
+
+/* ── Controls / ArgsTable ────────────────────────────────────────────────────── */
+/* .sb-argstableBlock is the inner block; .docblock-argstable is the wrapper.  */
+html[data-theme='dark'] .sb-argstableBlock {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme='dark'] .sb-argstableBlock-head th {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme='dark'] .sb-argstableBlock-body td {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
+/* "Set string" / action buttons in argstable rows — Emotion forces color:     */
+/* rgba(0,0,0,0) (invisible) on these; override explicitly.                   */
+html[data-theme='dark'] .sb-argstableBlock-body button,
+html[data-theme='dark'] .docblock-argstable-body button {
+  color: #f1f5f9 !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: #334155 !important;
+}
+
+/* Text / number / select inputs inside controls rows */
+html[data-theme='dark'] .docblock-argstable-body input,
+html[data-theme='dark'] .docblock-argstable-body select,
+html[data-theme='dark'] .docblock-argstable-body textarea,
+html[data-theme='dark'] .sb-argstableBlock-body input,
+html[data-theme='dark'] .sb-argstableBlock-body select,
+html[data-theme='dark'] .sb-argstableBlock-body textarea {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  border-color: #475569 !important;
+}
+
+/* ── Tables (generic, e.g. markdown tables in MDX) ──────────────────────────── */
+html[data-theme='dark'] .sbdocs-wrapper table {
+  color: #f1f5f9 !important;
+}
+html[data-theme='dark'] .sbdocs-wrapper table th {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+html[data-theme='dark'] .sbdocs-wrapper table td {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+html[data-theme='dark'] .sbdocs-wrapper table tr {
+  border-color: #334155 !important;
+}
+
+/* ── Code / Source blocks ────────────────────────────────────────────────────── */
+html[data-theme='dark'] .docblock-source {
+  background-color: #020617 !important;
+  border-color: #1e293b !important;
+}
+
+html[data-theme='dark'] .docblock-source button {
+  color: #94a3b8 !important;
+}
+
+html[data-theme='dark'] .docblock-source button:hover {
+  color: #f1f5f9 !important;
+}
+
+/* ── Light mode: explicit resets (prevent bleed from dark rules) ─────────────── */
+html[data-theme='light'] .sbdocs-wrapper {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+html[data-theme='light'] .sbdocs-wrapper h1,
+html[data-theme='light'] .sbdocs-wrapper h2,
+html[data-theme='light'] .sbdocs-wrapper h3,
+html[data-theme='light'] .sbdocs-wrapper h4,
+html[data-theme='light'] .sbdocs-wrapper p,
+html[data-theme='light'] .sbdocs-wrapper li {
+  color: #0f172a !important;
+}
+
+html[data-theme='light'] .sbdocs-preview {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+html[data-theme='light'] .docs-story {
+  background-color: #ffffff !important;
+}
+
+html[data-theme='light'] .sb-argstableBlock-body button,
+html[data-theme='light'] .docblock-argstable-body button {
+  color: #0f172a !important;
+}
+
+html[data-theme='light'] .docblock-argstable-body input,
+html[data-theme='light'] .docblock-argstable-body select,
+html[data-theme='light'] .docblock-argstable-body textarea,
+html[data-theme='light'] .sb-argstableBlock-body input,
+html[data-theme='light'] .sb-argstableBlock-body select,
+html[data-theme='light'] .sb-argstableBlock-body textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* ── Transitions — mask async per-element stagger (120ms ≈ 2 frames) ─────────── */
 .sbdocs-wrapper,
 .sbdocs-content,
 .sbdocs-preview,

@@ -25,7 +25,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "vitest run -c .storybook/vitest.config.ts",
-    "test:all": "pnpm test && pnpm test:e2e",
+    "test:playwright": "playwright test",
+    "test:playwright:dev": "playwright test --config=playwright.dev.config.ts",
+    "test:all": "pnpm test && pnpm test:e2e && pnpm test:playwright",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -47,6 +49,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@mdx-js/react": "^3.1.1",
+    "@playwright/test": "^1.60.0",
     "@storybook/addon-docs": "^10.4.0",
     "@storybook/addon-vitest": "10.4.0",
     "@storybook/react": "10.4.0",
@@ -71,6 +75,8 @@
     "globals": "^17.6.0",
     "happy-dom": "^20.9.0",
     "playwright": "^1.60.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
     "storybook": "^10.4.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.0",
@@ -78,5 +84,17 @@
     "vite": "^8.0.10",
     "vite-svg-loader": "^5.1.0",
     "vitest": "^4.1.7"
+  },
+  "overrides": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"
+  },
+  "resolutions": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"
   }
 }
