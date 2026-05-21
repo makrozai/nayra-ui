@@ -31,6 +31,16 @@ export function ThemedDocsContainer({
 
   const sbTheme = themeName === 'dark' ? darkTheme : lightTheme;
 
+  if (!DocsContainer) {
+    return (
+      <div style={{ padding: '2rem', color: 'red' }}>
+        <h2>DocsContainer error</h2>
+        <p>The original DocsContainer from @storybook/addon-docs/blocks is undefined in this build.</p>
+        <div>{children}</div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div

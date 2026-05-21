@@ -52,32 +52,62 @@ yarn add @makrozai/nayra-ui
 
 ---
 
-## 🚀 Uso rápido
+## 🚀 Uso rápido y Configuración
+
+Para utilizar Nayra UI y asegurar que los estilos, temas y prefijos funcionen correctamente, sigue estos pasos:
+
+### 1. Importar los estilos globales
+
+En el punto de entrada de tu aplicación (ej. `main.tsx`, `App.tsx` o `layout.tsx`), importa el CSS compilado de la librería:
 
 ```tsx
-import { NaIcon } from '@makrozai/nayra-ui';
 import '@makrozai/nayra-ui/style.css';
-
-function App() {
-  return <NaIcon icon="fas fa-home" size={24} title="Home" />;
-}
 ```
 
-### Personalizar el prefijo CSS
+### 2. Configurar el proveedor global (Opcional pero recomendado)
 
-Envuelve tu aplicación con `ConfigProvider` para cambiar el prefijo de clases CSS:
+Envuelve tu aplicación con el `ConfigProvider` para inyectar un prefijo personalizado para todas las clases CSS generadas. Por defecto, el prefijo es `Na`.
 
 ```tsx
 import { ConfigProvider, NaIcon } from '@makrozai/nayra-ui';
+import '@makrozai/nayra-ui/style.css';
 
 function App() {
   return (
     <ConfigProvider prefixCls="my-app">
       <NaIcon icon="fas fa-home" size={24} title="Home" />
-      {/* Genera: class="my-app-icon fas fa-home" */}
+      {/* Esto renderizará el icono con la clase: "my-app-icon fas fa-home" */}
     </ConfigProvider>
   );
 }
+```
+
+### 3. Activar el Modo Oscuro
+
+Nayra UI expone variables CSS integradas para `light` y `dark` themes. Para activar el modo oscuro, el consumidor simplemente debe añadir el atributo `data-theme="dark"` a la etiqueta `<html>`:
+
+```html
+<html data-theme="dark">
+  <!-- Nayra UI adaptará automáticamente todos sus colores -->
+</html>
+```
+
+### 4. Uso del Componente Icon
+
+Nayra UI soporta dos métodos para renderizar íconos mediante el componente `NaIcon` (o el nombre que exportes):
+
+**A) Font Awesome (CSS Classes):**
+Asegúrate de tener importado FontAwesome en tu proyecto si usas este método.
+```tsx
+<NaIcon icon="fas fa-home" size={24} title="Home" />
+```
+
+**B) SVGs Locales o React Components:**
+Puedes importar un SVG como un componente React (usualmente configurado vía Vite o SVGR) y pasarlo directamente.
+```tsx
+import MiIconoSVG from './assets/mi-icono.svg?react';
+
+<NaIcon source="svg" icon={MiIconoSVG} size={24} color="var(--primary)" />
 ```
 
 ---

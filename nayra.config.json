@@ -4,7 +4,7 @@
     "brand": {
       "title": "Nayra UI",
       "url": "https://github.com/makrozai/nayra-ui",
-      "image": "/nayra-logo.svg"
+      "image": "nayra-logo.svg"
     },
     "defaultTheme": "light",
     "fonts": {
