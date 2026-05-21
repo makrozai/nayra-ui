@@ -1,84 +1,145 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { Icon } from './Icon';
-import React, { SVGProps } from 'react';
+import React from 'react';
 
 const meta = {
   component: Icon,
   tags: ['autodocs'],
+  args: {
+    icon: 'house',
+    source: 'font',
+    type: 'solid',
+  },
 } satisfies Meta<typeof Icon>;
-
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Smoke check — one is enough per file
-export const Primary: Story = {
-  args: { icon: 'fas fa-home', title: 'Home icon' },
+// ---------------------------------------------------------------------------
+// Font — variantes de type
+// ---------------------------------------------------------------------------
+
+export const FontSolid: Story = {
+  args: { icon: 'heart', type: 'solid', size: 48, ariaLabel: 'Corazón solid' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const icon = canvas.getByRole('img', { name: /home icon/i });
+    const icon = canvas.getByRole('img', { name: /corazón solid/i });
     await expect(icon).toBeVisible();
   },
 };
 
-export const CssCheck: Story = {
-  args: { icon: 'fas fa-check', color: 'var(--color-primary-500)', title: 'Check icon' },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const icon = canvas.getByRole('img', { name: /check icon/i });
-    await expect(icon.style.color).toBe('var(--color-primary-500)');
-  },
+export const FontRegular: Story = {
+  args: { icon: 'heart', type: 'regular', size: 48, ariaLabel: 'Corazón regular' },
 };
 
-// Variant-only stories: no play needed
-export const CustomSize: Story = { args: { icon: 'fas fa-user', size: 48 } };
-
-export const SvgIcon: Story = { 
-  args: { 
-    icon: (props: SVGProps<SVGSVGElement>) => <svg viewBox="0 0 100 100" {...props}><circle cx="50" cy="50" r="40" /></svg> 
-  } 
+export const FontBrands: Story = {
+  args: { icon: 'github', type: 'brands', size: 48, ariaLabel: 'GitHub' },
 };
 
-export const AllVariants: Story = {
+// ---------------------------------------------------------------------------
+// Font — size y herencia
+// ---------------------------------------------------------------------------
+
+export const FontSizes: Story = {
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      <div>
-        <h4 style={{ marginBottom: '1rem', fontFamily: 'sans-serif' }}>Tamaños (Sizes)</h4>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'end' }}>
-          <Icon icon="fas fa-star" size={16} title="16px" />
-          <Icon icon="fas fa-star" size={24} title="24px" />
-          <Icon icon="fas fa-star" size={32} title="32px" />
-          <Icon icon="fas fa-star" size={48} title="48px" />
-        </div>
-      </div>
-      <div>
-        <h4 style={{ marginBottom: '1rem', fontFamily: 'sans-serif' }}>Colores (Colors)</h4>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <Icon icon="fas fa-heart" size={32} color="#ef4444" title="Rojo" />
-          <Icon icon="fas fa-heart" size={32} color="#3b82f6" title="Azul" />
-          <Icon icon="fas fa-heart" size={32} color="#10b981" title="Verde" />
-          <Icon icon="fas fa-heart" size={32} color="#f59e0b" title="Amarillo" />
-        </div>
-      </div>
-      <div>
-        <h4 style={{ marginBottom: '1rem', fontFamily: 'sans-serif' }}>Tipos (FontAwesome vs SVG)</h4>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <Icon icon="fas fa-camera" size={32} title="FontAwesome Camera" />
-          <Icon 
-            icon={(props: SVGProps<SVGSVGElement>) => (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                <polyline points="21 15 16 10 5 21"></polyline>
-              </svg>
-            )} 
-            size={32} 
-            title="Custom SVG Icon" 
-          />
-        </div>
-      </div>
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
+      <Icon icon="star" size={16} ariaLabel="16px" />
+      <Icon icon="star" size={24} ariaLabel="24px" />
+      <Icon icon="star" size={32} ariaLabel="32px" />
+      <Icon icon="star" size={48} ariaLabel="48px" />
     </div>
   ),
 };
 
+export const FontInheritSize: Story = {
+  name: 'Font — hereda font-size del padre',
+  render: () => (
+    <div style={{ fontSize: '2rem' }}>
+      <Icon icon="bell" ariaLabel="Campana" />
+      <span style={{ marginLeft: '0.5rem', verticalAlign: 'middle' }}>Texto 2rem</span>
+    </div>
+  ),
+};
+
+// ---------------------------------------------------------------------------
+// Font — rotación
+// ---------------------------------------------------------------------------
+
+export const FontRotate: Story = {
+  args: { icon: 'arrow-right', rotate: 90, size: 32, ariaLabel: 'Flecha rotada 90°' },
+};
+
+// ---------------------------------------------------------------------------
+// Font — decorativo (aria-hidden)
+// ---------------------------------------------------------------------------
+
+export const FontDecorative: Story = {
+  name: 'Font — decorativo (aria-hidden)',
+  args: { icon: 'circle-info', size: 24 },
+  play: async ({ canvasElement }) => {
+    const i = canvasElement.querySelector('i')!;
+    await expect(i).toHaveAttribute('aria-hidden', 'true');
+  },
+};
+
+// ---------------------------------------------------------------------------
+// SVG — solid y colorful
+// ---------------------------------------------------------------------------
+
+export const SvgSolid: Story = {
+  args: { icon: 'custom-star', source: 'svg', type: 'solid', size: 48, ariaLabel: 'Estrella solid' },
+};
+
+export const SvgRegular: Story = {
+  args: { icon: 'custom-star', source: 'svg', type: 'regular', size: 48, ariaLabel: 'Estrella regular' },
+};
+
+export const SvgColorful: Story = {
+  args: { icon: 'tech-vue', source: 'svg', type: 'colorful', size: 64, ariaLabel: 'Vue.js' },
+};
+
+// ---------------------------------------------------------------------------
+// SVG — fallback automático
+// ---------------------------------------------------------------------------
+
+export const SvgFallback: Story = {
+  name: 'SVG — fallback automático a solid',
+  args: { icon: 'custom-star', source: 'svg', type: 'brands', size: 48, ariaLabel: 'Fallback a solid' },
+};
+
+// ---------------------------------------------------------------------------
+// Galería — todos los iconos del proyecto
+// ---------------------------------------------------------------------------
+
+const SVG_ICONS: Array<{ icon: string; type: 'solid' | 'regular' | 'colorful' }> = [
+  { icon: 'arrow-path', type: 'solid' },
+  { icon: 'arrow-path', type: 'regular' },
+  { icon: 'bolt', type: 'solid' },
+  { icon: 'bolt', type: 'regular' },
+  { icon: 'custom-star', type: 'solid' },
+  { icon: 'custom-star', type: 'regular' },
+  { icon: 'plus', type: 'solid' },
+  { icon: 'plus', type: 'regular' },
+  { icon: 'minus', type: 'solid' },
+  { icon: 'minus', type: 'regular' },
+  { icon: 'tech-vue', type: 'colorful' },
+];
+
+export const Gallery: Story = {
+  name: 'Galería SVG del proyecto',
+  render: () => (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '1.5rem' }}>
+      {SVG_ICONS.map(({ icon, type }) => (
+        <div
+          key={`${icon}-${type}`}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', fontFamily: 'sans-serif', fontSize: '0.75rem' }}
+        >
+          <Icon icon={icon} source="svg" type={type} size={32} ariaLabel={`${icon} ${type}`} />
+          <span>{icon}</span>
+          <span style={{ opacity: 0.5 }}>{type}</span>
+        </div>
+      ))}
+    </div>
+  ),
+};
