@@ -106,8 +106,4 @@ describe('IconGallery', () => {
     expect(restored).toBeGreaterThan(filtered);
   });
 
-  it('el grid tiene role="list"', () => {
-    const { container } = render(<IconGallery />);
-    expect(container.querySelector('.c-icon-gallery__grid')!.getAttribute('role')).toBe('list');
-  });
 });

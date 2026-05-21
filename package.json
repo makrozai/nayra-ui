@@ -1,6 +1,6 @@
 {
   "name": "@makrozai/nayra-ui",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Nayra UI Library",
   "type": "module",
   "main": "./dist/nayra-ui.js",

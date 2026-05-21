@@ -27,7 +27,7 @@ export function IconGallery() {
           No se encontró ningún icono con &ldquo;{query}&rdquo;
         </p>
       ) : (
-        <ul className="c-icon-gallery__grid" role="list">
+        <ul className="c-icon-gallery__grid">
           {filtered.map(icon => (
             <li key={icon.name} className="c-icon-gallery__item">
               <Icon
