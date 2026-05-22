@@ -34,7 +34,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 11
 
       # 3. Configurar Node.js con caché
       - name: Setup Node.js
@@ -57,7 +57,7 @@ jobs:
 
       # 7. Verificación de tipos
       - name: Type check
-        run: pnpm tsc --noEmit
+        run: pnpm exec tsc --noEmit
 
       # 8. Tests unitarios
       - name: Unit tests
