@@ -33,8 +33,6 @@ jobs:
       # 2. Instalar pnpm
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 11
 
       # 3. Configurar Node.js con caché
       - name: Setup Node.js
