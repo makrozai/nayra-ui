@@ -22,7 +22,7 @@ jobs:
 
       - name: Create or Update Pull Request
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           COMMITS=$(git log origin/master..origin/develop --oneline --format="- %s (%h)")
           
