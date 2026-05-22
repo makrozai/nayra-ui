@@ -42,32 +42,53 @@ jobs:
         with:
           version: 11
 
-      # 3. Configurar Node.js con registry de GitHub Packages
+      # 3. Configurar Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
-          registry-url: 'https://npm.pkg.github.com'
 
       # 4. Instalar dependencias (lockfile estricto)
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # 5. Generar exports dinámicos (barrel files + prefijos)
+      # 5. Escribir auth token en .npmrc (pnpm no lee NPM_CONFIG_USERCONFIG de setup-node)
+      - name: Configure auth for GitHub Packages
+        run: echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> .npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 6. Generar exports dinámicos (barrel files + prefijos)
       - name: Generate exports
         run: pnpm prebuild
 
-      # 6. Compilar librería (type-check + vite build + .d.ts)
+      # 7. Compilar librería (type-check + vite build + .d.ts)
       - name: Build library
         run: pnpm build
 
-      # 7. Ejecutar tests unitarios
+      # 8. Ejecutar tests unitarios
       - name: Run unit tests
         run: pnpm test
 
-      # 8. Publicar a GitHub Packages
+      # 9. Verificar si la versión ya fue publicada (evita 409 Conflict en reintento)
+      - name: Check if version already published
+        id: version_check
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if pnpm view @makrozai/nayra-ui@${VERSION} version --registry https://npm.pkg.github.com 2>/dev/null; then
+            echo "already_published=true" >> $GITHUB_OUTPUT
+            echo "Version $VERSION ya existe en GitHub Packages, se omite el publish."
+          else
+            echo "already_published=false" >> $GITHUB_OUTPUT
+            echo "Version $VERSION no existe, se procederá a publicar."
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 10. Publicar a GitHub Packages
       - name: Publish to GitHub Packages
+        if: steps.version_check.outputs.already_published == 'false'
         run: pnpm publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

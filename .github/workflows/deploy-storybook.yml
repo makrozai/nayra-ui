@@ -66,13 +66,22 @@ jobs:
       - name: Build Storybook
         run: pnpm build-storybook
 
-      # 6. Subir artefacto para GitHub Pages
+      # 6. Verificar que el output existe antes de subir
+      - name: Verify build output
+        run: |
+          if [ ! -d "storybook-static" ]; then
+            echo "Error: storybook-static no fue generado por el build."
+            exit 1
+          fi
+          echo "Build OK — $(find storybook-static -type f | wc -l) archivos generados."
+
+      # 7. Subir artefacto para GitHub Pages
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: storybook-static
 
-      # 7. Desplegar a GitHub Pages
+      # 8. Desplegar a GitHub Pages
       - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
