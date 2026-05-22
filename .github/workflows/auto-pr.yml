@@ -25,31 +25,121 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          COMMITS=$(git log origin/master..origin/develop --oneline --format="- %s (%h)")
+          COMMITS_RAW=$(git log origin/master..origin/develop \
+            --format="%s (%h)" \
+            | grep -v "^chore(release):" \
+            | grep -v "^chore(sync):" \
+            | grep -v "^Merge pull request")
 
-          if [ -z "$COMMITS" ]; then
-            echo "No hay commits nuevos en develop para fusionar hacia master."
+          if [ -z "$COMMITS_RAW" ]; then
+            echo "No hay commits relevantes en develop para fusionar hacia master."
             exit 0
           fi
 
-          cat << 'EOF' > pr_body.txt
-          Este PR fue generado manualmente e incluye los siguientes cambios consolidados:
+          VERSION=$(node -p "require('./package.json').version")
+          DATE=$(date +%Y-%m-%d)
+          REPO="${GITHUB_REPOSITORY}"
 
-          ### Cambios
-          EOF
+          # Detectar tipo de release según conventional commits
+          HAS_FEAT=$(echo "$COMMITS_RAW" | grep -c "^feat" || true)
+          HAS_FIX=$(echo "$COMMITS_RAW"  | grep -c "^fix"  || true)
 
-          git log origin/master..origin/develop --oneline --format="- %s (%h)" >> pr_body.txt
+          if [ "$HAS_FEAT" -gt 0 ]; then
+            RELEASE_TYPE="🚀 Minor"
+          elif [ "$HAS_FIX" -gt 0 ]; then
+            RELEASE_TYPE="🐛 Patch"
+          else
+            RELEASE_TYPE="🔧 Infrastructure"
+          fi
+
+          # Agrupar commits por tipo
+          FEATURES=$(echo  "$COMMITS_RAW" | grep "^feat"     | grep -v "(ci)" | sed 's/^/- /' || true)
+          FIXES=$(echo     "$COMMITS_RAW" | grep "^fix"      | grep -v "(ci)" | sed 's/^/- /' || true)
+          REFACTORS=$(echo "$COMMITS_RAW" | grep "^refactor" | grep -v "(ci)" | sed 's/^/- /' || true)
+          PERF=$(echo      "$COMMITS_RAW" | grep "^perf"                      | sed 's/^/- /' || true)
+          DOCS=$(echo      "$COMMITS_RAW" | grep "^docs"                      | sed 's/^/- /' || true)
+          TESTS=$(echo     "$COMMITS_RAW" | grep "^test"                      | sed 's/^/- /' || true)
+          CI=$(echo        "$COMMITS_RAW" | grep -E "^(ci|feat\(ci\)|fix\(ci\)|refactor\(ci\)|chore\(ci\))" | sed 's/^/- /' || true)
+          OTHER=$(echo     "$COMMITS_RAW" \
+            | grep -vE "^(feat|fix|refactor|perf|docs|test|ci|feat\(ci\)|fix\(ci\)|refactor\(ci\)|chore\(ci\))" \
+            | sed 's/^/- /' || true)
+
+          # Construir body
+          {
+            echo "## Release v${VERSION} — ${DATE}"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| **Versión** | \`${VERSION}\` |"
+            echo "| **Tipo** | ${RELEASE_TYPE} |"
+            echo "| **Branch** | \`develop\` → \`master\` |"
+            echo ""
+            echo "---"
+
+            if [ -n "$FEATURES" ]; then
+              echo ""
+              echo "### ✨ Features"
+              echo "$FEATURES"
+            fi
+
+            if [ -n "$FIXES" ]; then
+              echo ""
+              echo "### 🐛 Bug Fixes"
+              echo "$FIXES"
+            fi
+
+            if [ -n "$PERF" ]; then
+              echo ""
+              echo "### ⚡ Performance"
+              echo "$PERF"
+            fi
+
+            if [ -n "$REFACTORS" ]; then
+              echo ""
+              echo "### ♻️ Refactors"
+              echo "$REFACTORS"
+            fi
+
+            if [ -n "$DOCS" ]; then
+              echo ""
+              echo "### 📚 Documentation"
+              echo "$DOCS"
+            fi
+
+            if [ -n "$TESTS" ]; then
+              echo ""
+              echo "### 🧪 Tests"
+              echo "$TESTS"
+            fi
+
+            if [ -n "$CI" ]; then
+              echo ""
+              echo "### 🔧 CI / Infrastructure"
+              echo "$CI"
+            fi
+
+            if [ -n "$OTHER" ]; then
+              echo ""
+              echo "### 📦 Other"
+              echo "$OTHER"
+            fi
+
+            echo ""
+            echo "---"
+            echo "**Comparar:** [\`master...develop\`](https://github.com/${REPO}/compare/master...develop)"
+          } > pr_body.txt
 
           PR_EXISTS=$(gh pr list --base master --head develop --json number -q '.[0].number')
+          PR_TITLE="Release v${VERSION}"
 
           if [ -n "$PR_EXISTS" ] && [ "$PR_EXISTS" != "null" ]; then
-            echo "Actualizando PR existente #$PR_EXISTS..."
-            gh pr edit $PR_EXISTS --title "Release: Acumulado de develop a master" --body-file pr_body.txt
+            echo "Actualizando PR existente #${PR_EXISTS}..."
+            gh pr edit "$PR_EXISTS" --title "$PR_TITLE" --body-file pr_body.txt
           else
-            echo "Creando nuevo PR..."
+            echo "Creando nuevo PR: ${PR_TITLE}"
             gh pr create \
               --base master \
               --head develop \
-              --title "Release: Acumulado de develop a master" \
+              --title "$PR_TITLE" \
               --body-file pr_body.txt
           fi
