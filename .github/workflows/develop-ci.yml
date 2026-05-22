@@ -3,6 +3,7 @@ name: Develop CI
 on:
   push:
     branches: ["develop"]
+  workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true

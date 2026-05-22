@@ -8,6 +8,7 @@ env:
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 jobs:
   create-pr:
     runs-on: ubuntu-latest
@@ -57,6 +58,10 @@ jobs:
               echo "Error: No se pudo hacer push a develop. Si tienes reglas de protección en develop, desactívalas para el bot o permite push directo momentáneamente."
               exit 1
             }
+
+            # Disparar develop-ci.yml explícitamente (GITHUB_TOKEN push no dispara workflows automáticamente)
+            echo "Disparando Develop CI en el commit del version bump..."
+            gh workflow run develop-ci.yml --ref develop
           fi
 
           if [ -n "$PR_EXISTS" ] && [ "$PR_EXISTS" != "null" ]; then
